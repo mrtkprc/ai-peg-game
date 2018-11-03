@@ -11,12 +11,34 @@ class PegApplication():
         self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
         
         self.GetValiableMovement(self.tree.root)
+        
+    def GetEmptyHolesAfterRemovingPeg(self,currentEmptyHole,validHole):
+        if currentEmptyHole[0] == validHole[0]:
+            if (int(currentEmptyHole[1]) > int(currentEmptyHole[1])):
+                return [validHole,validHole[0]+chr(int(validHole)+1)] 
+            else:
+                return [validHole,validHole[0]+chr(int(validHole)-1)]
+        else: #bu elseden itibaren devam et 
+            if (int(currentEmptyHole[1]) > int(currentEmptyHole[1])):
+                pass
+            else:           
+                pass
 
     def CheckCaseValid(self,case):
+        print("Case :",case)
         least_str_ord = ord('A')
         most_str_ord = ord('G')
+        case_str_ord = ord(case[0])
+        case_num_ord = int(case[1])
 
-        pass
+        if (case_str_ord < least_str_ord) or (case_str_ord > most_str_ord): 
+            return False
+        elif (case_num_ord > 6) or (case_num_ord<0):
+            return False
+        elif case in self.m_invalidHoles:
+            return False
+        else:
+            return True
 
     def GetValiableMovement(self,hole):
         validCaseslist = []
@@ -38,20 +60,13 @@ class PegApplication():
         return validCaseslist
 
 
-        """
-        if (hole_str_ord + 2) > most_str_ord:
-            
-        elif (hole_str_ord - 2) < least_str_ord:
-
-        elif hole_num_ord + 2 > 6
-        """
 
 
 
 
 
 
-        valid_list = []
+        
         
 
 
