@@ -12,10 +12,11 @@ class PegApplication():
 
     def __init__(self):
         self.tree = Tree()
-        self.tree.create_node("D3","D3",data=0)  # root node
-        
-        self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
+        self.tree.create_node("D3",data=0)  # root node
 
+        self.root_id = self.tree.root
+                
+        self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
         #rootHole = "E5,D6,E6,E3,E2,E1,B2,B3,B4,C2,C1,C0,D2,D1,D0,C6,D3,F2,C4,F4,D5,C3,F3"
         rootHole = "D3"
         #playablePegs = self.GetPlayablePegs(rootHole)
@@ -24,22 +25,53 @@ class PegApplication():
         #newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
         #print(newNodesForTree)
 
-        self.CreateTreeWithRecursion(rootHole)
+        #self.CreateTreeWithRecursion(rootHole,self.root_id)
+        self.CreateTreeWithLoop(rootHole,self.root_id)
+        self.tree.show()
+
+    def CreateTreeWithLoop(self,emptyHole,parID):
+
+        self.tree.show()
+
+        emptyHoleData = emptyHole
+        parentID = parID
+
+        playablePegs = self.GetPlayablePegs(emptyHoleData)
+
+        if len(playablePegs) == 0:
+            return
+
+        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(emptyHoleData,playablePegs)
+        newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
+        lastparentID =  ""
+        for node in newNodesForTree:
+            lastparentID = self.tree.create_node(node,parent=parentID)    
+
+        all_leaves_empty_holes = []    
+        all_leaves_empty_holes.append(lastparentID)
+        for sibling in self.tree.siblings(lastparentID.identifier):
+            all_leaves_empty_holes.append(sibling)
 
         
-    def CreateTreeWithRecursion(self,parentNode):
-        self.tree.show()
+        for leaf in all_leaves_empty_holes:
+            self.CreateTreeWithLoop(leaf.tag,leaf.identifier)
+            
+
         
-        playablePegs = self.GetPlayablePegs(parentNode)
-        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(parentNode,playablePegs)
+        
+    def CreateTreeWithRecursion(self,emptyHoleData,parentID):
+        
+        playablePegs = self.GetPlayablePegs(emptyHoleData)
+        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(emptyHoleData,playablePegs)
         newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
 
         if len(newNodesForTree) == 0:
             return
 
         for i,node in enumerate(newNodesForTree):
-            self.tree.create_node(node,node,parent = parentNode)
-            self.CreateTreeWithRecursion(node)
+            created_node = self.tree.create_node(node,parent = parentID)
+            self.CreateTreeWithRecursion(node,created_node.identifier)
+            
 
            
         
@@ -165,22 +197,6 @@ class PegApplication():
                 validCaseslist.append(case4)
 
         return validCaseslist
-
-
-
-
-
-
-
-
-        
-        
-
-
-        
-        
-    
-
 
 if __name__=="__main__":
     serverPort=12000
