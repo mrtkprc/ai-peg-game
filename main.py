@@ -30,9 +30,7 @@ class PegApplication():
         self.tree.show()
 
     def CreateTreeWithLoop(self,emptyHole,parID):
-
         self.tree.show()
-
         emptyHoleData = emptyHole
         parentID = parID
 
@@ -55,8 +53,6 @@ class PegApplication():
         
         for leaf in all_leaves_empty_holes:
             self.CreateTreeWithLoop(leaf.tag,leaf.identifier)
-            
-
         
         
     def CreateTreeWithRecursion(self,emptyHoleData,parentID):
