@@ -11,8 +11,8 @@ class Direction(Enum):
 class PegProblem(Problem):
     def __init__(self):
         self.initial = "D3"
+        self.pathCost = 0
         self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
-        print("Hello")
     def actions(self, state):
         playablePegs = self.GetPlayablePegs(state)
         return playablePegs
@@ -24,10 +24,6 @@ class PegProblem(Problem):
         for i,nodes in enumerate(newNodesForTree):
             if action in nodes:
                 return newNodesForTree[i]
-                
-
-
-
 
     def goal_test(self, state):
         #print("Playable Peg Count: and State",len(self.GetPlayablePegs(state)),state)
@@ -35,11 +31,12 @@ class PegProblem(Problem):
             return False
         else:
             print("Final State: ",state)
+            print("Path Cost: ",self.pathCost)
             return True
 
         
     def path_cost(self, c, state1, action, state2):
-        pass
+        self.pathCost += 1
     def value(self, state):
         pass
     def GetNextEmptyHolesWithComma(self,allPossibles):
@@ -164,11 +161,8 @@ class PegProblem(Problem):
         return validCaseslist   
 
 
-
-
-
 if __name__=="__main__":
     pp = PegProblem()
-    breadth_first_tree_search(pp)
+    depth_first_graph_search(pp)
 
     
