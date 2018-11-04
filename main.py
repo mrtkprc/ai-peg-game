@@ -16,6 +16,7 @@ class PegApplication():
         
         self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
 
+        #rootHole = "E5,D6,E6,E3,E2,E1,B2,B3,B4,C2,C1,C0,D2,D1,D0,C6,D3,F2,C4,F4,D5,C3,F3"
         rootHole = "D3"
         #playablePegs = self.GetPlayablePegs(rootHole)
         #print("Playable Pegs", playablePegs)
@@ -37,9 +38,6 @@ class PegApplication():
             return
 
         for i,node in enumerate(newNodesForTree):
-            if(i != 0):
-                continue
-
             self.tree.create_node(node,node,parent = parentNode)
             self.CreateTreeWithRecursion(node)
 
@@ -69,22 +67,22 @@ class PegApplication():
             cur_emp_holes = currentEmptyHoles.split(',')
             
             for i, emp_hol in enumerate(cur_emp_holes):
-                
-                if (peg_move_right == emp_hol):
+                #print("Playable Peg and Empty Hole",playablePeg,emp_hol)
+                if (peg_move_right == emp_hol and not self.GetMovePegPosition(playablePeg,Direction.RIGHT,1) in cur_emp_holes):
                     cur_emp_holes[i] = playablePeg
-                    cur_emp_holes.append(self.GetMovePegPosition(playablePeg,Direction.RIGHT,1))
+                    cur_emp_holes.insert(0,self.GetMovePegPosition(playablePeg,Direction.RIGHT,1))
                     break
-                elif (peg_move_left == emp_hol):
+                elif (peg_move_left == emp_hol and not self.GetMovePegPosition(playablePeg,Direction.LEFT,1) in cur_emp_holes):
                     cur_emp_holes[i] = playablePeg
-                    cur_emp_holes.append(self.GetMovePegPosition(playablePeg,Direction.LEFT,1))
+                    cur_emp_holes.insert(0,self.GetMovePegPosition(playablePeg,Direction.LEFT,1))
                     break
-                elif (peg_move_down == emp_hol):
+                elif (peg_move_down == emp_hol and not self.GetMovePegPosition(playablePeg,Direction.DOWN,1) in cur_emp_holes):
                     cur_emp_holes[i] = playablePeg
-                    cur_emp_holes.append(self.GetMovePegPosition(playablePeg,Direction.DOWN,1))    
+                    cur_emp_holes.insert(0,self.GetMovePegPosition(playablePeg,Direction.DOWN,1))    
                     break
-                elif (peg_move_top == emp_hol):
+                elif (peg_move_top == emp_hol and not self.GetMovePegPosition(playablePeg,Direction.TOP,1) in cur_emp_holes):
                     cur_emp_holes[i] = playablePeg
-                    cur_emp_holes.append(self.GetMovePegPosition(playablePeg,Direction.TOP,1))
+                    cur_emp_holes.insert(0,self.GetMovePegPosition(playablePeg,Direction.TOP,1))
                     break
 
             allValidEmptyHoles.append(cur_emp_holes)        
