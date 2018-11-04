@@ -1,6 +1,6 @@
-from treelib import *
 import string
 from enum import Enum
+from search import *
 
 class Direction(Enum):
     RIGHT=0
@@ -8,70 +8,32 @@ class Direction(Enum):
     DOWN=2
     TOP=3
 
-class PegApplication():
-
+class PegProblem(Problem):
     def __init__(self):
-        self.tree = Tree()
-        self.tree.create_node("D3",data=0)  # root node
-
-        self.root_id = self.tree.root
-                
+        self.initial = "D3"
         self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
-        #rootHole = "E5,D6,E6,E3,E2,E1,B2,B3,B4,C2,C1,C0,D2,D1,D0,C6,D3,F2,C4,F4,D5,C3,F3"
-        rootHole = "D3"
-        #playablePegs = self.GetPlayablePegs(rootHole)
-        #print("Playable Pegs", playablePegs)
-        #allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(rootHole,playablePegs)
-        #newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
-        #print(newNodesForTree)
-
-        #self.CreateTreeWithRecursion(rootHole,self.root_id)
-        self.CreateTreeWithLoop(rootHole,self.root_id)
-        self.tree.show()
-
-    def CreateTreeWithLoop(self,emptyHole,parID):
-        self.tree.show()
-        emptyHoleData = emptyHole
-        parentID = parID
-
-        playablePegs = self.GetPlayablePegs(emptyHoleData)
-
-        if len(playablePegs) == 0:
-            return
-
-        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(emptyHoleData,playablePegs)
+        print("Hello")
+    def actions(self, state):
+        playablePegs = self.GetPlayablePegs(state)
+        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(state,playablePegs)
         newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
-        lastparentID =  ""
-        for node in newNodesForTree:
-            lastparentID = self.tree.create_node(node,parent=parentID)    
-
-        all_leaves_empty_holes = []    
-        all_leaves_empty_holes.append(lastparentID)
-        for sibling in self.tree.siblings(lastparentID.identifier):
-            all_leaves_empty_holes.append(sibling)
+        return newNodesForTree
+        
+    def result(self, state, action):
+        return action
+    def goal_test(self, state):
+        print("Playable Peg Count: and State",len(self.GetPlayablePegs(state)),state)
+        if len(self.GetPlayablePegs(state))>0:
+            return False
+        else:
+            print("Final State: ",state)
+            return True
 
         
-        for leaf in all_leaves_empty_holes:
-            self.CreateTreeWithLoop(leaf.tag,leaf.identifier)
-        
-        
-    def CreateTreeWithRecursion(self,emptyHoleData,parentID):
-        
-        playablePegs = self.GetPlayablePegs(emptyHoleData)
-        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(emptyHoleData,playablePegs)
-        newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
-
-        if len(newNodesForTree) == 0:
-            return
-
-        for i,node in enumerate(newNodesForTree):
-            created_node = self.tree.create_node(node,parent = parentID)
-            self.CreateTreeWithRecursion(node,created_node.identifier)
-            
-
-           
-        
-
+    def path_cost(self, c, state1, action, state2):
+        pass
+    def value(self, state):
+        pass
     def GetNextEmptyHolesWithComma(self,allPossibles):
         all_pos_strings = []
         for possible in allPossibles:
@@ -81,8 +43,7 @@ class PegApplication():
             possible_str = possible_str[:-1]    
             all_pos_strings.append(possible_str)
         
-        return all_pos_strings    
-
+        return all_pos_strings  
 
     def GetEmptyHolesAfterPlayingPeg(self,currentEmptyHoles,playablePegs):
         allValidEmptyHoles = []
@@ -115,7 +76,7 @@ class PegApplication():
 
             allValidEmptyHoles.append(cur_emp_holes)        
 
-        return allValidEmptyHoles            
+        return allValidEmptyHoles 
 
     def GetMovePegPosition(self,peg,direction,move_count = 1):
         moved_peg = ""
@@ -128,7 +89,7 @@ class PegApplication():
         elif Direction.TOP == direction:
             moved_peg = peg[0]+str(int(peg[1])-move_count)    
 
-        return moved_peg    
+        return moved_peg
 
     def IsNextHoleEmpty(self,holes,hole,direction):
         test_hole = ""
@@ -192,9 +153,14 @@ class PegApplication():
             if holes.find(str(case4)) == -1 and self.CheckPegValid(case4) and not self.IsNextHoleEmpty(holes,hole,Direction.TOP) :
                 validCaseslist.append(case4)
 
-        return validCaseslist
+        return validCaseslist   
+
+
+
+
 
 if __name__=="__main__":
-    serverPort=12000
-    PegApplication()
+    pp = PegProblem()
+    depth_first_tree_search(pp)
+
     
