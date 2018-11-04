@@ -15,14 +15,22 @@ class PegProblem(Problem):
         print("Hello")
     def actions(self, state):
         playablePegs = self.GetPlayablePegs(state)
-        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(state,playablePegs)
-        newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
-        return newNodesForTree
+        return playablePegs
         
     def result(self, state, action):
-        return action
+        playablePegs = self.GetPlayablePegs(state)
+        allEmptyHolesAfterPegMoving = self.GetEmptyHolesAfterPlayingPeg(state,playablePegs)
+        newNodesForTree = self.GetNextEmptyHolesWithComma(allEmptyHolesAfterPegMoving)
+        for i,nodes in enumerate(newNodesForTree):
+            if action in nodes:
+                return newNodesForTree[i]
+                
+
+
+
+
     def goal_test(self, state):
-        print("Playable Peg Count: and State",len(self.GetPlayablePegs(state)),state)
+        #print("Playable Peg Count: and State",len(self.GetPlayablePegs(state)),state)
         if len(self.GetPlayablePegs(state))>0:
             return False
         else:
@@ -161,6 +169,6 @@ class PegProblem(Problem):
 
 if __name__=="__main__":
     pp = PegProblem()
-    depth_first_tree_search(pp)
+    breadth_first_tree_search(pp)
 
     
