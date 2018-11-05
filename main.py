@@ -17,49 +17,6 @@ class PegProblem(Problem):
         self.pathCost = 0
         self.m_invalidHoles = ["A0","B0","F0","G0","A1","B1","F1","G1","A5","B5","F5","G5","A6","B6","F6","G6"]
         
-        
-    def drawResultImage(self):
-        resultImage = Image.new("RGB",(200,200),color=ImageColor.getrgb('purple'))
-        draw = ImageDraw.Draw(resultImage)
-        font = ImageFont.truetype("arial.ttf", 22)
-        cell_width = 25
-        cell_height = 25
-        
-        for val in range(7):
-            draw.text((0,(val*cell_height)+cell_width),str(val),fill="yellow",font=font)
-            draw.text(((val*cell_width+cell_width),0),str(chr(ord('A')+val)),fill="yellow",font=font)
-
-        #draw invalid holes with color black
-
-        for peg_chr in range(7):
-            for peg_num in range(7):
-                number = peg_num
-                cell_offset_x = 25
-                cell_offset_y = 25
-                character_number = peg_chr
-                draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="orange",outline="gray")
-        
-        for val in self.m_invalidHoles:
-            character = val[0]
-            number = int(val[1])
-            cell_offset_x = 25
-            cell_offset_y = 25
-
-            character_number = ord(character)-ord('A')
-            draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="black")
-        
-        for val in self.finalState.split(','):
-            character = val[0]
-            number = int(val[1])
-            cell_offset_x = 25
-            cell_offset_y = 25
-
-            character_number = ord(character)-ord('A')
-            draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="purple",outline='gray')
-
-        out_time = datetime.datetime.now().time()    
-        resultImage.save("result_"+str(out_time.hour)+"_"+str(out_time.minute)+"_"+str(out_time.second)+".png")
-
     def actions(self, state):
         playablePegs = self.GetPlayablePegs(state)
         return playablePegs
@@ -207,11 +164,67 @@ class PegProblem(Problem):
                 validCaseslist.append(case4)
 
         return validCaseslist   
+    
+    def drawResultImage(self):
+        resultImage = Image.new("RGB",(200,200),color=ImageColor.getrgb('purple'))
+        draw = ImageDraw.Draw(resultImage)
+        font = ImageFont.truetype("arial.ttf", 22)
+        cell_width = 25
+        cell_height = 25
+        
+        for val in range(7):
+            draw.text((0,(val*cell_height)+cell_width),str(val),fill="yellow",font=font)
+            draw.text(((val*cell_width+cell_width),0),str(chr(ord('A')+val)),fill="yellow",font=font)
+
+        #draw invalid holes with color black
+
+        for peg_chr in range(7):
+            for peg_num in range(7):
+                number = peg_num
+                cell_offset_x = 25
+                cell_offset_y = 25
+                character_number = peg_chr
+                draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="orange",outline="gray")
+        
+        for val in self.m_invalidHoles:
+            character = val[0]
+            number = int(val[1])
+            cell_offset_x = 25
+            cell_offset_y = 25
+
+            character_number = ord(character)-ord('A')
+            draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="black")
+        
+        for val in self.finalState.split(','):
+            character = val[0]
+            number = int(val[1])
+            cell_offset_x = 25
+            cell_offset_y = 25
+
+            character_number = ord(character)-ord('A')
+            draw.rectangle(((cell_offset_x+((character_number)*cell_width),cell_offset_y+(number*cell_height)),(cell_height+cell_offset_x+((character_number)*cell_width),cell_width+cell_offset_y+(number*cell_height))),fill="purple",outline='gray')
+
+        out_time = datetime.datetime.now().time()    
+        resultImage.save("result_"+str(out_time.hour)+"_"+str(out_time.minute)+"_"+str(out_time.second)+".png")
+        print("Output of final state image is completed.\n\t(*)Color orange shows pegs.\n\t(*)Color black shows invalid areas of game board.\nYou can view the image at current directory")
 
 
 if __name__=="__main__":
     pp = PegProblem()
-    depth_first_tree_search(pp)
-    pp.drawResultImage()
+    if len(sys.argv) != 2:
+        print("You can execute this file with following prototype\n ./exe_name <bfs or dfs or astar>\nExample: py ./main.py bfs")
+    else:
+        if str(sys.argv[1]).lower() == "bfs":
+            breadth_first_tree_search(pp)
+            pp.drawResultImage()
+        elif str(sys.argv[1]).lower() == "dfs":
+            depth_first_tree_search(pp)
+            pp.drawResultImage()
+        elif str(sys.argv[1]).lower() == "astar":
+            astar_search(pp)
+            pp.drawResultImage()
+        else:
+            print("You typed invalid arguments. Arguments should be bfs, dfs or astar")    
+
 
     
