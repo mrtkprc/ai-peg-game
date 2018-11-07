@@ -3,7 +3,7 @@ from enum import Enum
 from search import *
 from PIL import Image,ImageFont,ImageDraw,ImageEnhance,ImageColor
 import datetime
-
+from timeit import default_timer as timer
 
 class Direction(Enum):
     RIGHT=0
@@ -34,9 +34,10 @@ class PegProblem(Problem):
         if len(self.GetPlayablePegs(state))>0:
             return False
         else:
-            print("Final State: ",state)
+            print("Final State(Empty Holes): ",state)
             self.finalState = state
             print("Path Cost: ",self.pathCost)
+            print("Number of pegs in found final state: ",32-len(self.finalState.split(',')))
             return True
 
         
@@ -210,21 +211,29 @@ class PegProblem(Problem):
 
 
 if __name__=="__main__":
-    pp = PegProblem()
+    
     if len(sys.argv) != 2:
         print("You can execute this file with following prototype\n ./exe_name <bfs or dfs or astar>\nExample: py ./main.py bfs")
     else:
+        start = timer()
+        pp = PegProblem()
         if str(sys.argv[1]).lower() == "bfs":
             breadth_first_tree_search(pp)
-            pp.drawResultImage()
+            #pp.drawResultImage()
         elif str(sys.argv[1]).lower() == "dfs":
             depth_first_tree_search(pp)
-            pp.drawResultImage()
+            #pp.drawResultImage()
         elif str(sys.argv[1]).lower() == "astar":
             astar_search(pp)
-            pp.drawResultImage()
+            #pp.drawResultImage()
         else:
-            print("You typed invalid arguments. Arguments should be bfs, dfs or astar")    
+            print("You typed invalid arguments. Arguments should be bfs, dfs or astar")
+        
+        end = timer()        
+        print("Number of Node Generated: ",GetNumberofNodeGeneratedAndExpanded()[0])
+        print("Number of Node Expanded: ",GetNumberofNodeGeneratedAndExpanded()[1])
+        print("Maximum Node Kept in Memory: ",GetNumberofNodeGeneratedAndExpanded()[2])
+        print("\n\nElapsed Time: ",(end-start))
 
 
     
