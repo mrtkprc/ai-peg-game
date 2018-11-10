@@ -1,7 +1,7 @@
 import string
 from enum import Enum
 from search import *
-from PIL import Image,ImageFont,ImageDraw,ImageEnhance,ImageColor
+#from PIL import Image,ImageFont,ImageDraw,ImageEnhance,ImageColor
 import datetime
 from timeit import default_timer as timer
 
@@ -42,7 +42,8 @@ class PegProblem(Problem):
 
         
     def path_cost(self, c, state1, action, state2):
-        self.pathCost += 1
+        self.pathCost = c + 1
+        return c+1
     def value(self, state):
         pass
     def GetNextEmptyHolesWithComma(self,allPossibles):
@@ -133,7 +134,6 @@ class PegProblem(Problem):
         except:
             case_num_ord = -1    
 
-         
         if (case_str_ord < least_str_ord) or (case_str_ord > most_str_ord): 
             return False
         elif (case_num_ord > 6) or (case_num_ord<0):
@@ -165,7 +165,12 @@ class PegProblem(Problem):
                 validCaseslist.append(case4)
 
         return validCaseslist   
-    
+
+    def h(self,node):
+        #heuritic function 1
+        action_count = len(self.GetPlayablePegs(node.state))
+        return action_count
+    """
     def drawResultImage(self):
         resultImage = Image.new("RGB",(200,200),color=ImageColor.getrgb('purple'))
         draw = ImageDraw.Draw(resultImage)
@@ -208,9 +213,10 @@ class PegProblem(Problem):
         out_time = datetime.datetime.now().time()    
         resultImage.save("result_"+str(out_time.hour)+"_"+str(out_time.minute)+"_"+str(out_time.second)+".png")
         print("Output of final state image is completed.\n\t(*)Color orange shows pegs.\n\t(*)Color black shows invalid areas of game board.\nYou can view the image at current directory")
-
+    """
 
 if __name__=="__main__":
+    #pp.drawResultImage()
     
     if len(sys.argv) != 2:
         print("You can execute this file with following prototype\n ./exe_name <bfs or dfs or astar>\nExample: py ./main.py bfs")
@@ -228,12 +234,10 @@ if __name__=="__main__":
             #pp.drawResultImage()
         else:
             print("You typed invalid arguments. Arguments should be bfs, dfs or astar")
+            exit(1)
         
         end = timer()        
         print("Number of Node Generated: ",GetNumberofNodeGeneratedAndExpanded()[0])
         print("Number of Node Expanded: ",GetNumberofNodeGeneratedAndExpanded()[1])
         print("Maximum Node Kept in Memory: ",GetNumberofNodeGeneratedAndExpanded()[2])
         print("\n\nElapsed Time: ",(end-start))
-
-
-    
